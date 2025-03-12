@@ -1,25 +1,28 @@
 import translator as tr
 
-t = tr.Translator()
+t = tr.Translator()  #t è un oggetto di classe Translator
 
 
 while(True):
+    t.printMenu()  #stampa i menu richiamando metodo della classe translator
 
-    t.printMenu()
 
-    t.loadDictionary("filename.txt")
+    txtIn = input("Scegliere azione: ")
 
-    txtIn = input()
+    match txtIn:
+        case "1":
+            parola = input("Inserire la parola da aggiungere: ").lower()
+            traduzione = input("Inserire traduzione corrispondente: ").lower()
+            definizione = parola+" "+traduzione
+            t.handleAdd(definizione)
 
-    # Add input control here!
+        case "2":
+            parola = input("Inserire la parola da cercare: ").lower()
+            t.handleTranslate(parola)
 
-    if int(txtIn) == 1:
-        print()
-        txtIn = input()
-        pass
-    if int(txtIn) == 2:
-        pass
-    if int(txtIn) == 3:
-        pass
-    if int(txtIn) == 4:
-        break
+        case "3":
+            pass
+        case "4":
+            pass
+        case "5":
+            break

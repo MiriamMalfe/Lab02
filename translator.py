@@ -4,23 +4,84 @@ class Translator:
         pass
 
     def printMenu(self):
-        # 1. Aggiungi nuova parola
-        # 2. Cerca una traduzione
-        # 3. Cerca con wildcard
-        # 4. Exit
-        pass
+        print("------------------------")
+        print("Translator Alien-Italian")
+        print("------------------------")
+        print("1. Aggiungi una nuova parola")
+        print("2. Cerca una traduzione")
+        print("3. Cerca con wildcar")
+        print("4. Stampa tutto il dizionario")
+        print("5. Exit")
+        print("------------------------")
 
-    def loadDictionary(self, dict):
-        # dict is a string with the filename of the dictionary
-        pass
 
-    def handleAdd(self, entry):
-        # entry is a tuple <parola_aliena> <traduzione1 traduzione2 ...>
-        pass
+    def handleAdd(self, definizione):
+        self.aperto = open("dictionary.txt", "r") #apro dizionario in lettura
+        defi = definizione.split(" ") #defi è una lista che contiene le parole
+        dizionario = {} #creo dizionario vuoto
+        for line in self.aperto:   #per ogni riga del dictionary.txt:
+            line.strip("\n")  #tolgo a capo
+            line = line.split(" ")  #creo la linea (lista) composta dalla riga del dictionary.txt senza spazi
+            dizionario[line[0]] = [] #per ogni key (line[0]) del dizionario creo una lista vuota dove ci aggiungerò man mano le traduzioni
+            for i in range(len(line)): #per  ogni parola nel range lunghezza lista delle traduzioni
+                if i > 0:  #se la parola non è la key quindi è in posizione 1 (>0):
+                    dizionario[line[0]].append(line[i].strip("\n"))  #aggiungo alla key la traduzione (senza a capo)
+        print(dizionario)
+        lettere = True #variabile usata per capire se ho solo lettere
+        for i in defi: #per ogni parola in defi
+            if i.isalpha():  #controllo che le parole siano composte da solo lettere
+                pass #non faccio niente
+            else:  #altrimenti
+                lettere = False  #la variabile bool cambia
 
-    def handleTranslate(self, query):
-        # query is a string <parola_aliena>
-        pass
+        if lettere == True:  #se ci sono solo lettere:
+            trovato = 0  #variabile che indica se la key esiste già
+            #caso in cui la key sia presente già nel dizionario e devo aggiungere la traduzione
+            if defi[0] in dizionario: #se la key c'è già:
+                for i in dizionario[defi[0]]:  #per ogni traduzione associata alla key:
+                    if i == defi[1]: #se la traduzione esiste già esco dal ciclo e aggiorno il bool dicendo che c'è gia
+                        trovato = 1
+                        break #esco dal ciclo
+                if trovato == 0: #se la traduzione non c'è già la aggiungo alla key
+                    for i in range(1, len(defi)-1): #per ogni traduzione nella lista che va dalla prima traduzione fino alla fine
+                        dizionario[defi[0]].append(defi[i]) #appendo la nuova traduzione
+                                                            #definizione = "ciao caro carissimo brutto"
+                                                            #defi = ["ciao"]["caro"]
+            else:  #caso in cui la key non sia presente già nel dizionario
+                dizionario[defi[0]] = [] #creo la nuova key a cui associo la lista vuota elle traduzioni
+                for i in range(1, len(defi)):  #per ogni traduzione nel range della lunghezza della lista traduzioni:
+                    dizionario[defi[0]].append(defi[i])  #ci aggiungo la nuova traduzione
+            self.aperto.close()  #chiudo il dictionary.txt che era aperto in lettura
+            self.riscrivi = open("dictionary.txt", "w")  #apro il dictionary.txt in scrittura
+
+            #sovrascrivo il dizionario sul file txt
+            for k in dizionario: #PER OGNI CHIAV DEL DIZIONARIO:
+                stringa = ""  #creo la stringa che andrò a scrivere nel file perchè ci posso scrivere solo delle stringhe
+                stringa = k  #stringa = key , poi ora ci aggiungo le traduzioni
+                for i in dizionario[k]:  #scorro le traduzioni associate alla key
+                    stringa = stringa+" "+i  #stringa si aggiorna e diventa: key traduzione1 traduzione2 ....
+                stringa = stringa+"\n"  #aggiungo alla stringa a capo   (LA STRINGA SI RIFERISCE ALLA SINGOLA KEY E AI SUOI VALORI ASSOCIATI)
+                self.riscrivi.write(stringa)  #riscrivo la stringa nel file
+            self.riscrivi.close()   #chiudo dictionary.txt aperto in scrittura --> lo chiudo perchè così ho subito le parole salvate e le posso cercare subito
+        else:
+            print("Errore: hai inserito caratteri non consentiti")  #se invece non ci sono solo lettere significa che ci sono caratteri non consentiti --> stampo errore
+
+
+
+    def handleTranslate(self, parola):
+        self.aperto = open("dictionary.txt", "r")  #apro il file dictionary.txt in lettura
+        trovata = 0  #bool per sapere se la parola che cerco esiste
+        for line in self.aperto:  #per ogni riga del file:
+            line.strip("\n")  #rimuovo a capo
+            line = line.split(" ")   #rimuovo gli spazi
+            if line[0] == parola: #se la parola che cerco coincide con la parola (quindi controllo che ciò che cerco esista)
+                trovata = 1   #aggiorno il bool e gli dico che l'ho trovata
+                stringa = "La traduzione è: "   #inizio a creare la stringa che stamperò
+                for i in range(1, len(line)):   #per ogni parola nel range delle traduzioni
+                    stringa = stringa+" "+line[i]  #aggiorno la stringa--> stringa = La traduzione è: traduzione1, .....
+                print(stringa)  #stampo la stringa con le traduzioni
+        if trovata == 0:  #se invece la parola non esiste e cioè non l'ho trovata:
+            print("Traduzione non esistente")   #comunico all'utente che la parola cercata non esiste
 
     def handleWildCard(self,query):
         # query is a string with a ? --> <par?la_aliena>

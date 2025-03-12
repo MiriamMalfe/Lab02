@@ -21,8 +21,9 @@ while(True):
             t.handleTranslate(parola)
 
         case "3":
-            pass
+            parola = input("Inserire la parola da cercare: ").lower()
+            t.handleWildCard(parola)
         case "4":
-            pass
+            t.printDiz()
         case "5":
             break

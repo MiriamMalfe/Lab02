@@ -84,5 +84,46 @@ class Translator:
             print("Traduzione non esistente")   #comunico all'utente che la parola cercata non esiste
 
     def handleWildCard(self,query):
-        # query is a string with a ? --> <par?la_aliena>
-        pass
+        aperto = open("dictionary.txt", "r")   #apro il dizionario in lettura
+        lista = list(query)   #dalla query che mi da l'utente ci creo una lista di lettere
+
+        c=0  #variabile che mi conta il numero dei punti interrogativi che ha messo l'utente nella query
+        for i in lista:   #per ogni lettera nella lista di lettere:
+            if i == "?":  #se la lettera è il punto interrogativo:
+                c = c+1   #aggiorno la variabile contatore dei punti interrogativi
+
+        if c==0:   #se non ho punti interrogativi restituisco la traduzione corrispondente alla parola inserita dall'utente
+            self.handleTranslate(query)
+        if c==1:    #se ho un punto interrogativo:
+            diz = {}   #creo un dizionario vuoto che mi serve per associare la parola inserita dall'utente a tutte le possibili traduzioni
+            for line in aperto:  #per ogni riga del dictionary.txt
+                line.strip("\n")  #tolgo a capo
+                line = line.split(" ") #tolgo gli spazi così da avere una lista di parole
+                line[0] = list(line[0])  #creo una lista di lettere per le parole (non le traduzioni) del  dizionario
+
+                k = 0   #uso una variabile per vedere quante lettere sono uguali tra le due parole (di lista e di line)
+                if len(lista) == len(line[0]):   #se la lunghezza della parola del file corrisponde alla lunghezza della pparola inserita dall'utente
+                    for i in range(len(lista)):   #scorro le lettere della parola inserita dall'utente
+                        if lista[i] == line[0][i]:  #se la lettera della parola dell'utente è uguale alla lettera nella stessa posizione della lista line
+                            k = k+1   #aggiorno la variabile
+                    if k == len(lista)-1:  #se le due parole hanno la stessa lunghezza
+                        diz[query] = []   #creo un dizionario vuoto dove come key ho la parola inserita dall'utente e come valore la lista delle possibili traduzione
+                        for i in range(1, len(line)):  #per ogni lettera (traduzione) nella parola del file
+                            diz[query].append(line[i])  #aggiungo al dizionario la traduzione
+
+            for x in diz:  #per ogni traduzione associata alla parola inserita stampo le possibili traduzioni
+               print(diz[x].strip("\n"))
+
+        else:
+            print("Errore: hai inserito troppi punti interrogativi")   #stampo errore se si ha inserito più di un punto interrogativo
+
+    def printDiz(self):
+        aperto = open("dictionary.txt", "r")
+        for l in aperto:
+            print(l)
+
+
+
+
+
+
